@@ -32,6 +32,11 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Base route to prevent 500 errors on root visits
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ message: 'SmartCare POS API is running successfully' });
+});
+
 // Public routes (no tenant required)
 app.use('/api/auth', authRoutes);
 app.get('/api/health', (req: Request, res: Response) => {
@@ -77,9 +82,11 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// START THE SERVER DIRECTLY
-app.listen(PORT, () => {
-  console.log(`SmartCare API running on http://localhost:${PORT}`);
-});
+// START THE SERVER CONDITIONALLY (Avoids Vercel Serverless Crash)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`SmartCare API running on http://localhost:${PORT}`);
+  });
+}
 
 export default app;
