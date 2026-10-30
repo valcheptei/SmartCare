@@ -37,7 +37,7 @@ export default function ShiftsPage() {
   const fetchShifts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/shifts', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/shifts`, {
         headers: { 'x-tenant-id': '1' },
       });
       if (!response.ok) throw new Error('Failed to fetch shifts');
@@ -60,7 +60,7 @@ export default function ShiftsPage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/shifts/start', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/shifts/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-tenant-id': '1' },
         body: JSON.stringify({ 
@@ -90,7 +90,7 @@ export default function ShiftsPage() {
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:5000/api/shifts/${activeShift.id}/end`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/shifts/${activeShift.id}/end`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-tenant-id': '1' },
         body: JSON.stringify({ 
