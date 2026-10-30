@@ -24,17 +24,16 @@ export async function startShift(req: Request, res: Response) {
   }
 }
 
-// Added the generic <{ id: string }> to correctly type req.params.id for TypeScript
 export async function endShift(req: Request<{ id: string }>, res: Response) {
   try {
     const tenantId = parseInt(req.body.tenantId);
     const shiftId = parseInt(req.params.id);
-    const { closingCash } = req.body;
+    const { actualCash } = req.body;
 
     const updatedShift = await db.update(cashierShifts)
       .set({
         endTime: new Date(),
-        closingCash: closingCash.toString(),
+        actualCash: actualCash ? actualCash.toString() : "0",
         status: 'closed'
       })
       .where(and(eq(cashierShifts.id, shiftId), eq(cashierShifts.tenantId, tenantId)))
