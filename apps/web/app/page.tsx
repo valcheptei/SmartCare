@@ -42,7 +42,7 @@ export default function LandingPage() {
       </header>
       
       {/* Hero Section */}
-      <main className="flex-1 w-full flex flex-col items-center justify-center text-center px-6 lg:px-16 py-24 lg:py-32 relative overflow-hidden bg-gradient-to-b from-[#8BCBF0]/20 via-[#CBEBD0]/30 to-white">
+      <main className="flex-1 w-full flex flex-col items-center justify-start text-center px-6 lg:px-16 pt-12 pb-24 lg:pt-16 lg:pb-32 relative overflow-hidden bg-gradient-to-b from-[#8BCBF0]/20 via-[#CBEBD0]/30 to-white">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none"
           style={{ backgroundImage: `url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop')` }}

@@ -15,6 +15,7 @@ export const medicines = pgTable('medicines', {
   packSize: integer('pack_size'),
   unitOfMeasure: varchar('unit_of_measure', { length: 50 }),
   manufacturer: varchar('manufacturer', { length: 255 }),
+  status: varchar('status', { length: 50 }).default('ACTIVE').notNull(),
   isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

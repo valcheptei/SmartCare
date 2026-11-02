@@ -34,10 +34,13 @@ export default function ShiftsPage() {
   // Mock Current Logged-in User
   const currentUser = { id: 1, name: 'Mary Chemtai' };
 
+  // Fallback to localhost:5000 if the environment variable is missing
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
   const fetchShifts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/shifts`, {
+      const response = await fetch(`${API_URL}/api/shifts`, {
         headers: { 'x-tenant-id': '1' },
       });
       if (!response.ok) throw new Error('Failed to fetch shifts');
@@ -60,7 +63,7 @@ export default function ShiftsPage() {
     setError('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/shifts/start`, {
+      const response = await fetch(`${API_URL}/api/shifts/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-tenant-id': '1' },
         body: JSON.stringify({ 
@@ -90,7 +93,7 @@ export default function ShiftsPage() {
     setError('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/shifts/${activeShift.id}/end`, {
+      const response = await fetch(`${API_URL}/api/shifts/${activeShift.id}/end`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-tenant-id': '1' },
         body: JSON.stringify({ 
@@ -222,8 +225,10 @@ export default function ShiftsPage() {
             </div>
             <form onSubmit={handleStartShift} className="p-6 space-y-5">
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-2">Opening Till Cash (KES)</label>
+                <label htmlFor="openingCash" className="block text-xs font-bold text-gray-700 mb-2">Opening Till Cash (KES)</label>
                 <input 
+                  id="openingCash"
+                  name="openingCash"
                   type="number" step="0.01" required value={openingCash} onChange={(e) => setOpeningCash(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:ring-2 focus:ring-[#366498]" 
                 />
@@ -261,8 +266,10 @@ export default function ShiftsPage() {
 
             <form onSubmit={handleEndShift} className="p-6 space-y-5">
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-2">Actual Physical Cash Count (KES)</label>
+                <label htmlFor="actualCash" className="block text-xs font-bold text-gray-700 mb-2">Actual Physical Cash Count (KES)</label>
                 <input 
+                  id="actualCash"
+                  name="actualCash"
                   type="number" step="0.01" required value={actualCash} onChange={(e) => setActualCash(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl text-lg font-medium text-gray-900 focus:ring-2 focus:ring-[#366498]" 
                 />
@@ -280,8 +287,10 @@ export default function ShiftsPage() {
 
               {currentVariance !== 0 && actualCash && (
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-2">Reconciliation Notes (Required for variance)</label>
+                  <label htmlFor="reconciliationNotes" className="block text-xs font-bold text-gray-700 mb-2">Reconciliation Notes (Required for variance)</label>
                   <textarea 
+                    id="reconciliationNotes"
+                    name="reconciliationNotes"
                     required={currentVariance !== 0}
                     value={reconciliationNotes} onChange={(e) => setReconciliationNotes(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:ring-2 focus:ring-[#366498]" 

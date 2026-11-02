@@ -8,24 +8,26 @@ router.get('/kpis', async (req: Request, res: Response) => {
   try {
     const tenantId = Number((req as any).tenantId || 1);
 
-    // 1. Total Sales Calculation from payments
+    // 1. Total Sales Calculation 
+    // FIXED: Your schema uses 'total', not 'total_amount'
     const salesResult = await db.execute(
-      sql`SELECT COALESCE(SUM(total_amount), 0) as total_sales, COUNT(*) as transaction_count 
-          FROM payments WHERE tenant_id = ${tenantId} AND status = 'COMPLETED'`
+      sql`SELECT COALESCE(SUM(total), 0) as total_sales, COUNT(*) as transaction_count 
+          FROM sales WHERE tenant_id = ${tenantId}`
     );
     const totalSales = Number((salesResult.rows?.[0] as any)?.total_sales || 0);
     const transactionCount = Number((salesResult.rows?.[0] as any)?.transaction_count || 0);
 
-    // 2. Low Stock Items count (items with quantity < 20)
+    // 2. Low Stock Items count
     const stockResult = await db.execute(
       sql`SELECT COUNT(*) as low_stock FROM medicine_batches WHERE tenant_id = ${tenantId} AND current_quantity < 20`
     );
     const lowStockItems = Number((stockResult.rows?.[0] as any)?.low_stock || 0);
 
     // 3. Recent Transactions Feed
+    // FIXED: Matching 'total' and 'payment_status' to your schema
     const recentTxResult = await db.execute(
-      sql`SELECT id, receipt_number as "receiptNumber", total_amount as "totalAmount", payment_method as "paymentMethod", created_at as "createdAt" 
-          FROM payments WHERE tenant_id = ${tenantId} ORDER BY created_at DESC LIMIT 5`
+      sql`SELECT id, receipt_number as "receiptNumber", total as "totalAmount", payment_status as "paymentStatus", created_at as "createdAt" 
+          FROM sales WHERE tenant_id = ${tenantId} ORDER BY created_at DESC LIMIT 5`
     );
     const recentTransactions = recentTxResult.rows || recentTxResult;
 

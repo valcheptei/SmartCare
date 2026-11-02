@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { db } from '../../config/db';
-import { users } from './auth.schema';
+import { db } from '../../config/db'; // Ensure this points to your DB instance
+import { users } from '../../db/schema'; // Ensure this points to your schema file
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 
@@ -41,8 +41,7 @@ export async function login(req: Request, res: Response) {
       token: 'mock-jwt-session-token', // Replace with jsonwebtoken sign() in production
       user: {
         id: user[0].id,
-        firstName: user[0].firstName,
-        lastName: user[0].lastName,
+        name: user[0].name, // Fixed to match your schema (was firstName/lastName)
         role: user[0].role,
         tenantId: user[0].tenantId
       }

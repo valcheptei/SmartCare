@@ -11,23 +11,45 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    // Strict validation: Require at least 8 characters
     if (!password || password.length < 8) {
-      setError('Access Denied: Password must be at least 8 characters long with valid security credentials.');
+      setError('Access Denied: Password must be at least 8 characters long.');
       return;
     }
 
     setLoading(true);
     
-    // Simulate secure backend authentication check
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      // Send credentials to the secure backend for validation
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Authentication failed');
+      }
+
+      // Store the secure token (in localStorage for now, consider HttpOnly cookies for production)
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
       router.push('/dashboard');
-    }, 800);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,7 +62,7 @@ export default function LoginPage() {
         ></div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#071321]/95 via-[#071321]/50 to-transparent"></div>
 
-        {/* Top Branding with Corrected Native Image Logo */}
+        {/* Top Branding */}
         <div className="relative z-10 flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3.5 group">
             <div className="bg-white rounded-xl shadow-lg border border-white/20 p-1.5 flex items-center justify-center transition-transform group-hover:scale-105">
@@ -102,7 +124,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <label className="block text-xs font-bold text-gray-700">Password (Min 8 Chars)</label>
+                <label className="block text-xs font-bold text-gray-700">Password</label>
                 <a href="#" className="text-xs font-bold text-[#62C02A] hover:underline">Forgot password?</a>
               </div>
               <div className="relative">
@@ -126,12 +148,6 @@ export default function LoginPage() {
               {loading ? 'Authenticating...' : 'Sign in to Workspace →'}
             </button>
           </form>
-
-          <div className="text-center pt-2 border-t border-gray-100">
-            <p className="text-xs text-gray-500">
-              Need to register a new business? <a href="#" className="text-[#62C02A] font-bold hover:underline">Contact Sales</a>
-            </p>
-          </div>
         </div>
       </div>
     </div>
